@@ -16,9 +16,7 @@ sealed interface UiText {
     */
     class StringResource(
         @StringRes val resId: Int,
-
-        //use var ags if you need to pass any arguments between the string
-        //vararg val varargs: Any
+        vararg val args: Any
     ): UiText
 
     //use for composable function
@@ -26,7 +24,7 @@ sealed interface UiText {
     fun asString(): String {
         return when(this) {
             is DynamicString -> value
-            is StringResource -> stringResource(resId)
+            is StringResource -> stringResource(resId, *args)
         }
     }
 
@@ -35,6 +33,7 @@ sealed interface UiText {
         return when(this) {
             is DynamicString -> value
             is StringResource -> context.getString(resId)
+            is StringResource -> context.getString(resId, *args)
         }
     }
 }
