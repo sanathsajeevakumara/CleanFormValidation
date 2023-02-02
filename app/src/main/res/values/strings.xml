@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Clean Form Validation</string>
     <string name="email_blank_error">The email can\'t be blank</string>
+    <string name="email_pattern_error">That\'s not a valid email</string>
+    <string name="password_blank_error">The Password needs to consist of atleast %d characters</string>
+    <string name="password_dont_contain_letter_or_digit_error">The password needs to contain at least one letter and digit</string>
+    <string name="password_dont_match_error">The password don\'t match</string>
+    <string name="term_accept_error">Please accept the terms and conditions</string>
 </resources>
