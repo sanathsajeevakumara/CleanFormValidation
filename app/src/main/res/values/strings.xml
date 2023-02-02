@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Clean Form Validation</string>
+    <string name="email_blank_error">The email can\'t be blank</string>
 </resources>
