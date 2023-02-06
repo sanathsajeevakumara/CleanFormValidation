@@ -8,7 +8,7 @@ class ValidateAcceptTerms {
 
     fun execute(isTermAccept: Boolean): ValidationResults {
 
-        if (isTermAccept) {
+        if (!isTermAccept) {
             return ValidationResults(
                 isSuccessful = false,
                 errorMsg = UiText.StringResource(

@@ -8,6 +8,15 @@ class ValidateRepeatedPassword {
 
     fun execute(password: String, repeatedPassword: String): ValidationResults {
 
+        if (repeatedPassword.isBlank()) {
+            return ValidationResults(
+                isSuccessful = false,
+                errorMsg = UiText.StringResource(
+                    resId = R.string.repeat_password_blank_error,
+                )
+            )
+        }
+
         if (repeatedPassword != password) {
             return ValidationResults(
                 isSuccessful = false,

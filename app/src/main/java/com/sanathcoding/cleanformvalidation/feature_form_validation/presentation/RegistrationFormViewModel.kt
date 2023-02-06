@@ -1,5 +1,6 @@
 package com.sanathcoding.cleanformvalidation.feature_form_validation.presentation
 
+import android.app.Application
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -20,36 +21,54 @@ class RegistrationFormViewModel @Inject constructor(
     private val validateEmail: ValidateEmail,
     private val validatePassword: ValidatePassword,
     private val validateRepeatedPassword: ValidateRepeatedPassword,
-    private val validateAcceptTerms: ValidateAcceptTerms
+    private val validateAcceptTerms: ValidateAcceptTerms,
+    private val application: Application
 ) : ViewModel() {
 
     var state by mutableStateOf(RegistrationFormState())
         private set
 
+    var emailText by mutableStateOf("")
+        private set
+    var passwordText by mutableStateOf("")
+        private set
+    var repeatedPasswordText by mutableStateOf("")
+        private set
+    var termAcceptCheckBox by mutableStateOf(false)
+        private set
+
     private val validationEventChannel = Channel<ValidateEvent>()
     val validationEvents = validationEventChannel.receiveAsFlow()
+
+    fun updateEmail(email: String) {
+        emailText = email
+    }
+
+    fun updatePassword(password: String) {
+        passwordText = password
+    }
+
+    fun updateRepeatedPassword(repeatPassword: String) {
+        repeatedPasswordText = repeatPassword
+    }
+
+    fun updateAcceptTerms(isTermAccept: Boolean) {
+        termAcceptCheckBox = isTermAccept
+    }
 
     fun onEvent(event: RegistrationFormEvent) {
         when (event) {
             is RegistrationFormEvent.EmailChanged -> {
-                state = state.copy(
-                    email = event.email
-                )
+                state = state.copy(email = event.email)
             }
             is RegistrationFormEvent.PasswordChanged -> {
-                state = state.copy(
-                    password = event.password
-                )
+                state = state.copy(password = event.password)
             }
             is RegistrationFormEvent.RepeatedPasswordChanged -> {
-                state = state.copy(
-                    repeatedPassword = event.repeatedPassword
-                )
+                state = state.copy(repeatedPassword = event.repeatedPassword)
             }
             is RegistrationFormEvent.TermAcceptChanged -> {
-                state = state.copy(
-                    isAcceptTerms = event.isAcceptTerm
-                )
+                state = state.copy(isAcceptTerms = event.isAcceptTerm)
             }
             is RegistrationFormEvent.Submit -> {
                 submitData()
@@ -58,32 +77,32 @@ class RegistrationFormViewModel @Inject constructor(
     }
 
     private fun submitData() {
-        val emailResult = validateEmail.execute(state.email)
-        val passwordResult = validatePassword.execute(state.password)
+        val emailResult = validateEmail.execute(emailText)
+        val passwordResult = validatePassword.execute(passwordText)
         val repeatedPasswordResult =
-            validateRepeatedPassword.execute(state.password, state.repeatedPassword)
-        val termAcceptResult = validateAcceptTerms.execute(state.isAcceptTerms)
+            validateRepeatedPassword.execute(passwordText, repeatedPasswordText)
+        val termAcceptResult = validateAcceptTerms.execute(termAcceptCheckBox)
 
         val hasError = listOf(
             emailResult,
             passwordResult,
             repeatedPasswordResult,
             termAcceptResult
-        ).any { it.errorMsg != null }
+        ).any { !it.isSuccessful }
 
-        if (hasError) {
-            state =state.copy(
-                emailErrorMsg = state.emailErrorMsg,
-                passwordErrorMsg = state.passwordErrorMsg,
-                repeatedPasswordErrorMsg = state.repeatedPasswordErrorMsg,
-                termsErrorMsg = state.termsErrorMsg
-            )
-            return
-        }
+
+        state = state.copy(
+            emailErrorMsg = emailResult.errorMsg?.asString(application.applicationContext),
+            passwordErrorMsg = passwordResult.errorMsg?.asString(application.applicationContext),
+            repeatedPasswordErrorMsg =
+            repeatedPasswordResult.errorMsg?.asString(application.applicationContext),
+            termsErrorMsg = termAcceptResult.errorMsg?.asString(application.applicationContext),
+        )
+        if (hasError) return
+
         viewModelScope.launch {
             validationEventChannel.send(ValidateEvent.Success)
         }
-
     }
 
 }
