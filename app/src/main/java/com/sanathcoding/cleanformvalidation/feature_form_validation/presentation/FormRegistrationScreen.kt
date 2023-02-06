@@ -1,11 +1,14 @@
 package com.sanathcoding.cleanformvalidation.feature_form_validation.presentation
 
+import android.graphics.Paint.Align
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -114,7 +117,10 @@ fun RegistrationFormScreen(
         }
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
             Checkbox(
                 checked = viewModel.termAcceptCheckBox,
                 onCheckedChange = { isChecked ->
@@ -122,8 +128,11 @@ fun RegistrationFormScreen(
                     viewModel.onEvent(RegistrationFormEvent.TermAcceptChanged(isChecked))
                 }
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(text = UiText.StringResource(R.string.accept_terms).asString())
+
+            Text(
+                text = UiText.StringResource(R.string.accept_terms).asString(),
+                modifier = Modifier.align(Alignment.CenterVertically)
+            )
         }
         if (state.termsErrorMsg != null) {
             Text(
