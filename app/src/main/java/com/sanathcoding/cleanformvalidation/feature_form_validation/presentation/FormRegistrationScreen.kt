@@ -39,7 +39,7 @@ fun RegistrationFormScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(32.dp),
+            .padding(30.dp),
         verticalArrangement = Arrangement.Center
     ) {
         TextField(
